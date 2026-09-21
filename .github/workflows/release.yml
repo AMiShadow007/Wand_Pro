@@ -1,4 +1,4 @@
-name: Build and Release WandEnhancer
+name: Build and Release Wand Pro
 
 on:
   push:
@@ -10,25 +10,22 @@ permissions:
 
 jobs:
   build-and-release:
-    name: Build and Release
+    name: Build and Publish Release
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout source
         uses: actions/checkout@v5
 
-      - name: Build executable
+      - name: Build Wand Pro
         shell: cmd
         run: |
-          echo Building WandEnhancer...
           call build.cmd
           if errorlevel 1 exit /b 1
 
-      - name: Find executable
+      - name: Locate executable
         shell: powershell
         run: |
-          Write-Host "Searching for WandEnhancer.exe..."
-
           $exe = Get-ChildItem `
             -Path $env:GITHUB_WORKSPACE `
             -Filter "WandEnhancer.exe" `
@@ -38,29 +35,23 @@ jobs:
             Select-Object -First 1
 
           if ($null -eq $exe) {
-            Write-Host ""
-            Write-Host "ERROR: WandEnhancer.exe was not found."
-            Write-Host ""
-            Write-Host "Files produced by the build:"
-            Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -File |
-              Select-Object -ExpandProperty FullName
+            Write-Error "WandEnhancer.exe was not produced by the build."
             exit 1
           }
 
-          Write-Host ""
-          Write-Host "Found executable:"
+          Write-Host "Executable found:"
           Write-Host $exe.FullName
-          Write-Host ""
 
           "EXE_PATH=$($exe.FullName)" |
-            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            Out-File $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Create GitHub Release
-        shell: powershell
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" `
-            "$env:EXE_PATH#WandEnhancer.exe" `
-            --title "WandEnhancer ${{ github.ref_name }}" `
+          gh release create "${{ github.ref_name }}" \
+            "$EXE_PATH#WandEnhancer.exe" \
+            --repo "${{ github.repository }}" \
+            --title "Wand Pro ${GITHUB_REF_NAME}" \
             --generate-notes
