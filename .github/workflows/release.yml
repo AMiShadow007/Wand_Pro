@@ -28,20 +28,6 @@ jobs:
           npm install --global pnpm
           pnpm --version
 
-      - name: Configure pnpm cache
-        shell: powershell
-        run: |
-          $store = pnpm store path
-          "PNPM_STORE_PATH=$store" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
-
-      - name: Restore pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.PNPM_STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
       - name: Install dependencies
         shell: powershell
         run: |
