@@ -1,4 +1,4 @@
-name: Build and Release WandPro
+name: Build and Release WandEnhancer
 
 on:
   push:
@@ -20,18 +20,18 @@ jobs:
       - name: Build executable
         shell: cmd
         run: |
-          echo Building WandPro...
+          echo Building WandEnhancer...
           call build.cmd
           if errorlevel 1 exit /b 1
 
       - name: Find executable
         shell: powershell
         run: |
-          Write-Host "Searching for WandPro.exe..."
+          Write-Host "Searching for WandEnhancer.exe..."
 
           $exe = Get-ChildItem `
             -Path $env:GITHUB_WORKSPACE `
-            -Filter "WandPro.exe" `
+            -Filter "WandEnhancer.exe" `
             -Recurse `
             -File `
             -ErrorAction SilentlyContinue |
@@ -39,7 +39,7 @@ jobs:
 
           if ($null -eq $exe) {
             Write-Host ""
-            Write-Host "ERROR: WandPro.exe was not found."
+            Write-Host "ERROR: WandEnhancer.exe was not found."
             Write-Host ""
             Write-Host "Files produced by the build:"
             Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -File |
@@ -61,6 +61,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ github.ref_name }}" `
-            "$env:EXE_PATH#WandPro.exe" `
-            --title "WandPro ${{ github.ref_name }}" `
+            "$env:EXE_PATH#WandEnhancer.exe" `
+            --title "WandEnhancer ${{ github.ref_name }}" `
             --generate-notes
