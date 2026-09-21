@@ -23,22 +23,19 @@ namespace WandEnhancer.Core.Services
             new CultureInfo("ru-RU"),
             new CultureInfo("uk-UA"),
             new CultureInfo("ja-JP"),
-            new CultureInfo("tr-TR")
+            new CultureInfo("tr-TR"),
+            new CultureInfo("bn-BD")
         };
 
         private static CultureInfo _currentLanguage;
         private static ResourceDictionary _englishBaseDictionary;
         private static ResourceDictionary _activeLocaleDictionary;
 
-        /// <summary>
-        /// Localized string for <paramref name="key"/>, falling back to the key itself.
-        /// </summary>
         public static string Get(string key)
         {
             return Application.Current?.TryFindResource(key) as string ?? key;
         }
 
-        /// <summary>Localized format string filled with <paramref name="args"/>.</summary>
         public static string Format(string key, params object[] args)
         {
             return string.Format(Get(key), args);
@@ -52,30 +49,28 @@ namespace WandEnhancer.Core.Services
 
         public static void Initialize()
         {
-            // Load English as the base fallback dictionary
             _englishBaseDictionary = new ResourceDictionary
             {
                 Source = new Uri("Locale/lang.en-US.xaml", UriKind.Relative)
             };
 
-            // Try to load saved language preference
             var savedLanguage = SettingsManager.LoadSettings()?.Language;
             CultureInfo targetCulture = null;
 
             if (!string.IsNullOrEmpty(savedLanguage))
             {
-                targetCulture = SupportedLanguages.FirstOrDefault(c => c.Name == savedLanguage);
+                targetCulture = SupportedLanguages.FirstOrDefault(c =>
+                    string.Equals(c.Name, savedLanguage, StringComparison.OrdinalIgnoreCase));
             }
 
             if (targetCulture == null)
             {
-                // Fall back to system culture detection
                 var systemCulture = Thread.CurrentThread.CurrentUICulture;
-                targetCulture = SupportedLanguages.FirstOrDefault(c => 
-                    c.Name == systemCulture.Name || 
+                targetCulture = SupportedLanguages.FirstOrDefault(c =>
+                    c.Name == systemCulture.Name ||
                     c.TwoLetterISOLanguageName == systemCulture.TwoLetterISOLanguageName);
             }
-            
+
             SetLanguage(targetCulture ?? SupportedLanguages[0], saveSettings: false);
         }
 
@@ -84,57 +79,40 @@ namespace WandEnhancer.Core.Services
             if (culture == null)
                 throw new ArgumentNullException(nameof(culture));
 
-            if (Equals(culture, _currentLanguage))
-                return;
+            var supportedCulture = SupportedLanguages.FirstOrDefault(c => c.Name == culture.Name)
+                ?? SupportedLanguages[0];
 
-            var supportedCulture = SupportedLanguages.FirstOrDefault(c => c.Name == culture.Name);
-            if (supportedCulture == null)
-            {
-                supportedCulture = SupportedLanguages[0]; // Default to English
-            }
+            if (Equals(supportedCulture, _currentLanguage))
+                return;
 
             _currentLanguage = supportedCulture;
             Thread.CurrentThread.CurrentUICulture = supportedCulture;
 
-            // Create the locale dictionary with English as base for fallback
             var localeDict = new ResourceDictionary();
-            
-            // First, add English base dictionary for fallback
             if (_englishBaseDictionary != null && supportedCulture.Name != SupportedLanguages[0].Name)
             {
                 foreach (var key in _englishBaseDictionary.Keys)
-                {
                     localeDict[key] = _englishBaseDictionary[key];
-                }
             }
 
-            // Then overlay with the selected language (will override English keys)
             var targetDict = new ResourceDictionary
             {
                 Source = new Uri($"Locale/lang.{supportedCulture.Name}.xaml", UriKind.Relative)
             };
-            
-            foreach (DictionaryEntry entry in targetDict)
-            {
-                localeDict[entry.Key] = targetDict[entry.Key];
-            }
 
-            // Track injected dictionary to replace it on switch instead of appending.
+            foreach (DictionaryEntry entry in targetDict)
+                localeDict[entry.Key] = entry.Value;
+
             var merged = Application.Current.Resources.MergedDictionaries;
             if (_activeLocaleDictionary != null && merged.Contains(_activeLocaleDictionary))
-            {
                 merged[merged.IndexOf(_activeLocaleDictionary)] = localeDict;
-            }
             else
-            {
                 merged.Add(localeDict);
-            }
 
             _activeLocaleDictionary = localeDict;
-            
+
             if (saveSettings)
             {
-                // Merge into the loaded settings so other properties survive the save.
                 var settings = SettingsManager.LoadSettings() ?? new AppSettings();
                 settings.Language = supportedCulture.Name;
                 SettingsManager.SaveSettings(settings);
@@ -149,17 +127,15 @@ namespace WandEnhancer.Core.Services
                 {
                     Source = new Uri($"Locale/lang.{culture.Name}.xaml", UriKind.Relative)
                 };
-                
+
                 if (dict.Contains("language_display_name"))
-                {
                     return dict["language_display_name"] as string ?? culture.NativeName;
-                }
             }
             catch
             {
-                // Fallback to native name if loading fails
+                // Fall back to the native name if a locale resource is unavailable.
             }
-            
+
             return culture.NativeName;
         }
     }

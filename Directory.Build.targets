@@ -1,0 +1,6 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Keep the Bengali WPF dictionary in the legacy project without requiring a generated project file. -->
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'WandEnhancer'">
+    <Page Include="Locale\lang.bn-BD.xaml" />
+  </ItemGroup>
+</Project>
