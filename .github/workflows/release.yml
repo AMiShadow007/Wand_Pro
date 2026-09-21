@@ -17,6 +17,24 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v5
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Enable pnpm
+        shell: powershell
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          pnpm --version
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          pnpm install --frozen-lockfile
+
       - name: Build Wand Pro
         shell: cmd
         run: |
