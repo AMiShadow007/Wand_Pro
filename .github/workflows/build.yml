@@ -43,8 +43,8 @@ jobs:
       - name: Upload unsigned executable
         uses: actions/upload-artifact@v6
         with:
-          name: WandEnhancer-unsigned
-          path: WandEnhancer/bin/Release/WandEnhancer.exe
+          name: WandPro-unsigned
+          path: Release/WandPro.exe
           if-no-files-found: error
 
       # The published artifact is always the offline build; this only proves the
