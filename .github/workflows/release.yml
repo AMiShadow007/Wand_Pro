@@ -61,13 +61,27 @@ jobs:
           "EXE_PATH=$($exe.FullName)" |
             Out-File $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Create GitHub Release
+      - name: Create or update GitHub Release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" \
-            "$EXE_PATH#WandEnhancer.exe" \
-            --repo "${{ github.repository }}" \
-            --title "Wand Pro ${GITHUB_REF_NAME}" \
-            --generate-notes
+          TAG="${{ github.ref_name }}"
+
+          if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "Release $TAG already exists."
+            echo "Replacing WandEnhancer.exe..."
+
+            gh release upload "$TAG" \
+              "$EXE_PATH#WandEnhancer.exe" \
+              --repo "${{ github.repository }}" \
+              --clobber
+          else
+            echo "Creating release $TAG..."
+
+            gh release create "$TAG" \
+              "$EXE_PATH#WandEnhancer.exe" \
+              --repo "${{ github.repository }}" \
+              --title "Wand Pro $TAG" \
+              --generate-notes
+          fi
