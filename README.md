@@ -10,9 +10,9 @@
 
 <h4>An open-source interoperability tool designed to extend local client-side configurations and improve the UX of the Wand (WeMod) application.</h4>
 
-**❤️❤️❤️ This project is a fork of official Wand-Enhancer and offer Pre-built Release ready to use. ❤️❤️❤️**
+***❤️❤️❤️ This project is a fork of official Wand-Enhancer and offer Pre-built Release ready to use. ❤️❤️❤️***
 
-**🚨 IMPORTANT NOTICE: OFFICIAL PROJECT HAS NO OFFICIAL YOUTUBE TUTORIALS or GUIDES. 🚨**
+🚨 IMPORTANT NOTICE: OFFICIAL PROJECT HAS NO OFFICIAL YOUTUBE TUTORIALS or GUIDES. 🚨
 
 There are no official videos showing how to install or use this tool. Scammers are creating fake tutorials using this project's name and placing malware/password stealers in the video descriptions. Official GitHub releases contain release notes only, not `.exe` files. If you downloaded an `.exe` or archive from a YouTube link, a random website, or a third-party mirror, you did not get it from this project. We are not responsible for third-party downloads.
 
