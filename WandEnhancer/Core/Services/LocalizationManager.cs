@@ -13,6 +13,7 @@ namespace WandEnhancer.Core.Services
         public static readonly List<CultureInfo> SupportedLanguages = new List<CultureInfo>
         {
             new CultureInfo("en-US"),
+            new CultureInfo("bn-BD"),
             new CultureInfo("zh-CN"),
             new CultureInfo("de-DE"),
             new CultureInfo("fr-FR"),
@@ -23,8 +24,7 @@ namespace WandEnhancer.Core.Services
             new CultureInfo("ru-RU"),
             new CultureInfo("uk-UA"),
             new CultureInfo("ja-JP"),
-            new CultureInfo("tr-TR"),
-            new CultureInfo("bn-BD")
+            new CultureInfo("tr-TR")
         };
 
         private static CultureInfo _currentLanguage;
