@@ -63,6 +63,7 @@ This repository does not publish official compiled binaries. Build your own exec
 - Include the exact Wand version and stable/beta channel, selected patches, and whether the failure happened on a fresh install, an update, or Restore. Do not attach executables, account tokens or storage dumps.
 
 *Here how you do it:*
+
 https://github.com/user-attachments/assets/7966cabe-0aa6-424d-8c2f-981ad91e0f91
 
 
