@@ -64,7 +64,7 @@ This repository does not publish official compiled binaries. Build your own exec
 
 *Here how you do it:*
 
-assets/Usage_Guide.mp4
+[assets/Usage_Guide.mp4](https://github.com/AMiShadow007/Wand_Pro/blob/6e57752f93dab371021ebf1294008504df129894/assets/Usage_Guide.mp4)
 
 
 
